@@ -2,10 +2,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,15 +40,8 @@ export default function Navbar() {
       }`}
     >
       <div className="w-full h-full px-6 md:px-12 xl:px-16 flex items-center justify-between">
-        {/* Sisi Kiri: Logo dengan responsif ukuran */}
         <Link href="/" className="flex items-center group flex-shrink-0">
-          <div
-            className={`relative transition-all duration-500 ease-in-out group-hover:scale-105 ${
-              isScrolled
-                ? "w-32 h-32 md:w-48 md:h-48"
-                : "w-32 h-32 md:w-48 md:h-48"
-            }`}
-          >
+          <div className="relative transition-all duration-500 ease-in-out group-hover:scale-102 w-32 h-32 md:w-48 md:h-48">
             <Image
               src="/logo.png"
               alt="The Bali Dream Villa Logo"
@@ -57,24 +52,28 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Sisi Tengah: Teks Putih Bersih & Centered Vertikal */}
-        <div className="hidden lg:flex items-center space-x-5 xl:space-x-7 text-[11px] tracking-[0.25em] font-semibold h-full">
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`transition-colors duration-300 py-1 ${
-                isScrolled
-                  ? "text-white/90 hover:text-white"
-                  : "text-stone-200 hover:text-brand-gold"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+        <div className="hidden lg:flex items-center space-x-5 xl:space-x-7 text-[11px] tracking-[0.25em] font-medium h-full">
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`transition-colors duration-300 py-1 relative ${
+                  isActive
+                    ? "text-white font-semibold"
+                    : isScrolled
+                      ? "text-white/50 hover:text-white"
+                      : "text-stone-400 hover:text-white"
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Sisi Kanan: Button CTA */}
         <div className="hidden lg:block flex-shrink-0">
           <Link
             href="/book"
@@ -88,7 +87,6 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Tombol Hamburger Mobile */}
         <div className="lg:hidden flex items-center">
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -111,7 +109,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Menu Dropdown Mobile */}
+      {/* Dropdown Mobile */}
       <div
         className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
           isOpen
@@ -120,16 +118,24 @@ export default function Navbar() {
         } bg-brand-olive/98 backdrop-blur-xl border-t border-white/10`}
       >
         <div className="px-8 py-6 space-y-4 text-left tracking-[0.15em] text-xs font-semibold">
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="block py-2.5 text-white border-b border-white/10 hover:text-brand-dark transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`block py-2.5 border-b border-white/10 transition-colors ${
+                  isActive
+                    ? "text-white font-bold"
+                    : "text-white/60 hover:text-white"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
           <div className="pt-4">
             <Link
               href="/book"
